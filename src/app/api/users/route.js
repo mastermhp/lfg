@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs"
 import { users } from "@clerk/nextjs/server"
-import { connectToDatabase } from "@/lib/mongodb"
+import { connectToDatabase } from "../../../../lib/mongodb"
+// import { connectToDatabase } from "@/lib/mongodb"
 
 export async function GET(request) {
   try {

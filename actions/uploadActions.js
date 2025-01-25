@@ -7,7 +7,7 @@ import os from "os";
 import cloudinary from "cloudinary";
 import { connectToDatabase } from "../lib/mongodb";
 import { ObjectId } from "mongodb";
-import { clerkClient } from "@clerk/nextjs"
+import { clerkClient } from "@clerk/clerk-sdk-node"
 
 
 cloudinary.config({
@@ -522,7 +522,6 @@ export async function getAllHashtags() {
     return { success: false, error: error.message }
   }
 }
-
 
 
 export async function syncUsersFromClerk() {

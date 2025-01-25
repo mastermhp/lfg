@@ -9,10 +9,9 @@ import { getAllCategories, getAllHashtags } from "../../../actions/uploadActions
 export default function SearchAndFilters() {
   const router = useRouter()
   const searchParams = useSearchParams()
-
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All")
-  const [selectedSort, setSelectedSort] = useState(searchParams.get("sort") || "Newest")
+  const [searchQuery, setSearchQuery] = useState(searchParams?.get("search") || "")
+  const [selectedCategory, setSelectedCategory] = useState(searchParams?.get("category") || "All")
+  const [selectedSort, setSelectedSort] = useState(searchParams?.get("sort") || "Newest")
   const [isHashtagsOpen, setIsHashtagsOpen] = useState(false)
   const [isCategoryOpen, setIsCategoryOpen] = useState(false)
   const [isSortOpen, setIsSortOpen] = useState(false)
@@ -39,6 +38,8 @@ export default function SearchAndFilters() {
   }, [])
 
   useEffect(() => {
+    if (!searchParams) return
+
     const params = new URLSearchParams(searchParams)
     if (searchQuery) params.set("search", searchQuery)
     else params.delete("search")

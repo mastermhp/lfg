@@ -7,7 +7,9 @@ export default function Home({ searchParams }) {
     <div className="min-h-screen neon-background">
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <SearchAndFilters />
+        <Suspense fallback={<div className="h-16 bg-gray-800/50 animate-pulse rounded-lg" />}>
+            <SearchAndFilters />
+          </Suspense>
 
           <Suspense
             fallback={

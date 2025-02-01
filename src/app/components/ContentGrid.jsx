@@ -1,7 +1,6 @@
 // import { getAllFiles } from "../actions/uploadActions"
 import { getAllFiles } from "../../../actions/uploadActions";
-import ContentCard from "./ContentCard";
-// import ContentCard from "./ContentCard"
+import ContentCard from "./ContentCard"
 
 // Fisher-Yates shuffle algorithm
 function shuffleArray(array) {
@@ -25,7 +24,10 @@ export default async function ContentGrid({ searchParams }) {
       (item) =>
         item.title.toLowerCase().includes(searchQuery) ||
         item.category.toLowerCase().includes(searchQuery) ||
-        (item.hashtags && item.hashtags.toLowerCase().includes(searchQuery.replace("#", ""))),
+        (item.hashtags &&
+          (Array.isArray(item.hashtags)
+            ? item.hashtags.some((tag) => tag.toLowerCase().includes(searchQuery.replace("#", "")))
+            : typeof item.hashtags === "string" && item.hashtags.toLowerCase().includes(searchQuery.replace("#", "")))),
     )
   }
 

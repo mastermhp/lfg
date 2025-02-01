@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "@/utils/googleDrive"
+
 
 export default function AdminContentCard({ content, onContentSelect }) {
   const [isHovered, setIsHovered] = useState(false)
@@ -29,6 +31,11 @@ export default function AdminContentCard({ content, onContentSelect }) {
     return null
   }
 
+  const getThumbnailUrl = (url) => {
+    if (!url) return "/placeholder.svg"
+    return isGoogleDriveUrl(url) ? getGoogleDriveDirectUrl(url) : url
+  }
+
   return (
     <div
       className="relative aspect-video rounded-lg overflow-hidden bg-[#1f2937]"
@@ -36,7 +43,7 @@ export default function AdminContentCard({ content, onContentSelect }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Image
-        src={content.thumbnail || "/placeholder.svg"}
+        src={getThumbnailUrl(content.thumbnail) || "/placeholder.svg"}
         alt={content.title}
         width={400}
         height={225}

@@ -6,8 +6,20 @@ const nextConfig = {
           },
     },
     images: {
-        domains: ["res.cloudinary.com"]
-    }
+        domains: ["drive.google.com", "lh3.googleusercontent.com", "res.cloudinary.com"],
+        remotePatterns: [
+          {
+            protocol: "https",
+            hostname: "drive.google.com",
+            pathname: "/file/**",
+          },
+          {
+            protocol: "https",
+            hostname: "lh3.googleusercontent.com",
+            pathname: "/**",
+          },
+        ],
+      },
 };
 
 export default nextConfig;

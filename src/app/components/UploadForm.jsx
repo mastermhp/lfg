@@ -1,23 +1,21 @@
-
 "use client"
 
-import React, { useRef, useState, useEffect } from "react"
-import PhotoCard from "./PhotoCard"
-import VideoCard from "./VideoCard"
-import DocumentCard from "./DocumentCard"
+import { useRef, useState, useEffect } from "react"
 import { X, Loader2 } from "lucide-react"
-import { uploadFiles, updateContent, deleteContent  } from "../../../actions/uploadActions"
+import { uploadFiles, updateContent } from "../../../actions/uploadActions"
+// import { uploadFiles, updateContent } from "../actions/uploadActions"
 
 export default function UploadForm({ initialContent = null, onClose, onContentUpdate, onContentDelete, onContentAdd }) {
   const formRef = useRef()
-  const [files, setFiles] = useState([])
-  const [videos, setVideos] = useState([])
-  const [documents, setDocuments] = useState([])
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
   const [hashtags, setHashtags] = useState("")
   const [permissions, setPermissions] = useState("")
+  const [thumbnail, setThumbnail] = useState("")
+  const [images, setImages] = useState([])
+  const [videos, setVideos] = useState([])
+  const [documents, setDocuments] = useState([])
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -27,68 +25,20 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
       setTitle(initialContent.title)
       setDescription(initialContent.description)
       setCategory(initialContent.category)
-      setHashtags(initialContent.hashtags)
-      setPermissions(initialContent.permissions)
+      setHashtags(
+        Array.isArray(initialContent.hashtags) ? initialContent.hashtags.join(", ") : initialContent.hashtags || "",
+      )
+      setPermissions(
+        Array.isArray(initialContent.permissions)
+          ? initialContent.permissions.join(", ")
+          : initialContent.permissions || "",
+      )
+      setThumbnail(initialContent.thumbnail || "")
+      setImages(initialContent.images || [])
+      setVideos(initialContent.videos || [])
+      setDocuments(initialContent.documents || [])
     }
   }, [initialContent])
-
-  async function handleInputFiles(e) {
-    const selectedFiles = e.target.files
-    const validFiles = [...selectedFiles].filter((file) => {
-      return file.size < 1024 * 1024 * 1000 && file.type.startsWith("image/")
-    })
-    if (validFiles.length === 0) {
-      alert("No valid image files were selected. Ensure they are images under 5MB.")
-      return
-    }
-    setFiles((prev) => [...validFiles, ...prev])
-  }
-
-  async function handleInputVideos(e) {
-    const selectedFiles = e.target.files
-    const validVideos = [...selectedFiles].filter((file) => {
-      return file.size < 1024 * 1024 * 3000 && file.type.startsWith("video/")
-    })
-    if (validVideos.length === 0) {
-      alert("No valid video files were selected. Ensure they are videos under 20MB.")
-      return
-    }
-    setVideos((prev) => [...validVideos, ...prev])
-  }
-
-  async function handleInputDocuments(e) {
-    const selectedFiles = e.target.files
-    const validDocuments = [...selectedFiles].filter((file) => {
-      return (
-        file.size < 1024 * 1024 * 10 &&
-        (file.type === "application/pdf" ||
-          file.type === "application/msword" ||
-          file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-          file.type === "application/vnd.ms-excel" ||
-          file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-      )
-    })
-    if (validDocuments.length === 0) {
-      alert("No valid documents were selected. Supported formats: PDF, Word, Excel (max 10MB).")
-      return
-    }
-    setDocuments((prev) => [...validDocuments, ...prev])
-  }
-
-  async function handleDeleteFiles(index) {
-    const validFiles = files.filter((_, i) => i !== index)
-    setFiles(validFiles)
-  }
-
-  async function handleDeleteVideos(index) {
-    const validVideos = videos.filter((_, i) => i !== index)
-    setVideos(validVideos)
-  }
-
-  async function handleDeleteDocuments(index) {
-    const validDocuments = documents.filter((_, i) => i !== index)
-    setDocuments(validDocuments)
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -101,10 +51,10 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
       formData.append("category", category)
       formData.append("hashtags", hashtags)
       formData.append("permissions", permissions)
-
-      files.forEach((file) => formData.append("images", file))
-      videos.forEach((video) => formData.append("videos", video))
-      documents.forEach((doc) => formData.append("documents", doc))
+      formData.append("thumbnail", thumbnail)
+      formData.append("images", JSON.stringify(images))
+      formData.append("videos", JSON.stringify(videos))
+      formData.append("documents", JSON.stringify(documents))
 
       let res
       if (isEditing) {
@@ -117,14 +67,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
         if (isEditing) {
           onContentUpdate({
             ...initialContent,
-            title,
-            description,
-            category,
-            hashtags,
-            permissions,
-            images: [...(initialContent.images || []), ...files.map((f) => URL.createObjectURL(f))],
-            videos: [...(initialContent.videos || []), ...videos.map((v) => URL.createObjectURL(v))],
-            documents: [...(initialContent.documents || []), ...documents.map((d) => d.name)],
+            ...res.content,
           })
         } else {
           onContentAdd(res.content)
@@ -141,42 +84,41 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
     }
   }
 
-  const handleDelete = async () => {
-    if (isEditing && initialContent) {
-      setIsLoading(true)
-      try {
-        const res = await deleteContent(initialContent._id)
-        if (res.success) {
-          onContentDelete(initialContent._id)
-          onClose()
-        } else {
-          throw new Error(res.error || "Failed to delete content")
-        }
-      } catch (error) {
-        console.error(error)
-        alert("Failed to delete content.")
-      } finally {
-        setIsLoading(false)
-      }
+  const handleAddLink = (type, link) => {
+    switch (type) {
+      case "image":
+        setImages([...images, link])
+        break
+      case "video":
+        setVideos([...videos, link])
+        break
+      case "document":
+        setDocuments([...documents, link])
+        break
+      default:
+        break
     }
   }
 
-  const handleOutsideClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose()
+  const handleRemoveLink = (type, index) => {
+    switch (type) {
+      case "image":
+        setImages(images.filter((_, i) => i !== index))
+        break
+      case "video":
+        setVideos(videos.filter((_, i) => i !== index))
+        break
+      case "document":
+        setDocuments(documents.filter((_, i) => i !== index))
+        break
+      default:
+        break
     }
   }
-
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
-      onClick={handleOutsideClick}
-    >
-      <div
-        className="bg-[hsl(var(--sidebar-bg))] rounded-lg w-full max-w-2xl p-6 border border-[hsl(var(--border))] shadow-xl max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-[hsl(var(--sidebar-bg))] rounded-lg w-full max-w-2xl p-6 border border-[hsl(var(--border))] shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white">{isEditing ? "Edit Content" : "Add New Content"}</h2>
           <button
@@ -204,23 +146,6 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
             className="w-full px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[100px]"
           />
 
-          <div className="space-y-2">
-            <label className="block text-lg font-medium text-white">Thumbnail</label>
-            <div
-              className="border-2 border-dashed border-[hsl(var(--border))] rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-              onClick={() => document.getElementById("thumbnail-upload").click()}
-            >
-              <p className="text-gray-400">Drag 'n' drop a thumbnail image here, or click to select one</p>
-              <input
-                id="thumbnail-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleInputFiles}
-                className="hidden"
-              />
-            </div>
-          </div>
-
           <input
             type="text"
             placeholder="Category"
@@ -237,72 +162,149 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
             className="w-full px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
 
+          <input
+            type="text"
+            placeholder="Thumbnail (Google Drive link)"
+            value={thumbnail}
+            onChange={(e) => setThumbnail(e.target.value)}
+            className="w-full px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+
           <div className="space-y-2">
-            <label className="block text-lg font-medium text-white">Images</label>
-            <div
-              className="border-2 border-dashed border-[hsl(var(--border))] rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-              onClick={() => document.getElementById("images-upload").click()}
-            >
-              <p className="text-gray-400">Drag 'n' drop some images here, or click to select files</p>
+            <h3 className="text-lg font-medium text-white">Images</h3>
+            {images.map((link, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={link}
+                  readOnly
+                  className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveLink("image", index)}
+                  className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <div className="flex items-center space-x-2">
               <input
-                id="images-upload"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleInputFiles}
-                className="hidden"
+                type="text"
+                placeholder="Add image link"
+                className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    handleAddLink("image", e.target.value)
+                    e.target.value = ""
+                  }
+                }}
               />
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              {files.map((file, index) => (
-                <PhotoCard key={index} url={URL.createObjectURL(file)} onClick={() => handleDeleteFiles(index)} />
-              ))}
+              <button
+                type="button"
+                onClick={(e) => {
+                  const input = e.target.previousElementSibling
+                  handleAddLink("image", input.value)
+                  input.value = ""
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Add
+              </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-lg font-medium text-white">Videos</label>
-            <div
-              className="border-2 border-dashed border-[hsl(var(--border))] rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-              onClick={() => document.getElementById("videos-upload").click()}
-            >
-              <p className="text-gray-400">Drag 'n' drop some videos here, or click to select files</p>
+            <h3 className="text-lg font-medium text-white">Videos</h3>
+            {videos.map((link, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={link}
+                  readOnly
+                  className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveLink("video", index)}
+                  className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <div className="flex items-center space-x-2">
               <input
-                id="videos-upload"
-                type="file"
-                accept="video/*"
-                multiple
-                onChange={handleInputVideos}
-                className="hidden"
+                type="text"
+                placeholder="Add video link"
+                className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    handleAddLink("video", e.target.value)
+                    e.target.value = ""
+                  }
+                }}
               />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {videos.map((video, index) => (
-                <VideoCard key={index} url={URL.createObjectURL(video)} onClick={() => handleDeleteVideos(index)} />
-              ))}
+              <button
+                type="button"
+                onClick={(e) => {
+                  const input = e.target.previousElementSibling
+                  handleAddLink("video", input.value)
+                  input.value = ""
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Add
+              </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-lg font-medium text-white">Documents</label>
-            <div
-              className="border-2 border-dashed border-[hsl(var(--border))] rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-              onClick={() => document.getElementById("documents-upload").click()}
-            >
-              <p className="text-gray-400">Drag 'n' drop some documents here, or click to select files</p>
+            <h3 className="text-lg font-medium text-white">Documents</h3>
+            {documents.map((link, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={link}
+                  readOnly
+                  className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveLink("document", index)}
+                  className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <div className="flex items-center space-x-2">
               <input
-                id="documents-upload"
-                type="file"
-                accept=".pdf,.doc,.docx,.xls,.xlsx"
-                multiple
-                onChange={handleInputDocuments}
-                className="hidden"
+                type="text"
+                placeholder="Add document link"
+                className="flex-grow px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    handleAddLink("document", e.target.value)
+                    e.target.value = ""
+                  }
+                }}
               />
-            </div>
-            <div className="mt-4">
-              {documents.map((doc, index) => (
-                <DocumentCard key={index} name={doc.name} onClick={() => handleDeleteDocuments(index)} />
-              ))}
+              <button
+                type="button"
+                onClick={(e) => {
+                  const input = e.target.previousElementSibling
+                  handleAddLink("document", input.value)
+                  input.value = ""
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Add
+              </button>
             </div>
           </div>
 
@@ -332,7 +334,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
             {isEditing && (
               <button
                 type="button"
-                onClick={handleDelete}
+                onClick={onContentDelete}
                 disabled={isLoading}
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[hsl(var(--sidebar-bg))]"
               >
@@ -352,3 +354,4 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
     </div>
   )
 }
+

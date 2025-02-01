@@ -33,7 +33,16 @@ export default function AdminPanel({ initialContents, initialCategories, initial
       prevContents.map((content) => (content._id === updatedContent._id ? updatedContent : content)),
     )
     setCategories((prev) => [...new Set([...prev, updatedContent.category])])
-    const newHashtags = updatedContent.hashtags.split(",").map((tag) => tag.trim())
+
+    let newHashtags
+    if (Array.isArray(updatedContent.hashtags)) {
+      newHashtags = updatedContent.hashtags
+    } else if (typeof updatedContent.hashtags === "string") {
+      newHashtags = updatedContent.hashtags.split(",").map((tag) => tag.trim())
+    } else {
+      newHashtags = []
+    }
+
     setHashtags((prev) => [...new Set([...prev, ...newHashtags])])
   }
 
@@ -62,7 +71,16 @@ export default function AdminPanel({ initialContents, initialCategories, initial
   const handleNewContent = (newContent) => {
     setContents((prev) => [...prev, newContent])
     setCategories((prev) => [...new Set([...prev, newContent.category])])
-    const newHashtags = newContent.hashtags.split(",").map((tag) => tag.trim())
+
+    let newHashtags
+    if (Array.isArray(newContent.hashtags)) {
+      newHashtags = newContent.hashtags
+    } else if (typeof newContent.hashtags === "string") {
+      newHashtags = newContent.hashtags.split(",").map((tag) => tag.trim())
+    } else {
+      newHashtags = []
+    }
+
     setHashtags((prev) => [...new Set([...prev, ...newHashtags])])
   }
 

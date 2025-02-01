@@ -1,7 +1,14 @@
 import Image from "next/image"
 import { ImageIcon, Video, FileText } from "lucide-react"
+import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "@/utils/googleDrive"
+// import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "../utils/googleDrive"
 
 export default function ContentDetails({ content }) {
+  const getThumbnailUrl = (url) => {
+    if (!url) return "/placeholder.svg"
+    return isGoogleDriveUrl(url) ? getGoogleDriveDirectUrl(url) : url
+  }
+
   const renderHashtags = () => {
     if (!content.hashtags) return null
 
@@ -27,7 +34,12 @@ export default function ContentDetails({ content }) {
   return (
     <div className="bg-[#1f2937] rounded-lg overflow-hidden">
       <div className="aspect-video relative">
-        <Image src={content.thumbnail || "/placeholder.svg"} alt={content.title} fill className="object-cover" />
+        <Image
+          src={getThumbnailUrl(content.thumbnail) || "/placeholder.svg"}
+          alt={content.title}
+          layout="fill"
+          objectFit="cover"
+        />
       </div>
 
       <div className="p-6">

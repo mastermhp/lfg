@@ -1,11 +1,8 @@
 "use server";
 
-
 import { connectToDatabase } from "../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { clerkClient } from "@clerk/clerk-sdk-node"
-
-
 
 
 export async function getContentById(id) {
@@ -123,19 +120,35 @@ export async function updateContent(id, formData) {
 
 export async function deleteContent(id) {
   try {
+    console.log(`Attempting to delete content with id: ${id}`)
     const { db } = await connectToDatabase()
-    const result = await db.collection("contents").deleteOne({ _id: new ObjectId(id) })
 
-    if (result.deletedCount === 0) {
-      return { success: false, error: "Content not found" }
+    // First, check if the content exists
+    const content = await db.collection("contents").findOne({ _id: new ObjectId(id) })
+
+    if (!content) {
+      console.log(`No content found with id: ${id}`)
+      return { success: false, error: "Content not found. It may have been already deleted." }
     }
 
+    // If content exists, proceed with deletion
+    const result = await db.collection("contents").deleteOne({ _id: new ObjectId(id) })
+
+    console.log(`Delete result:`, result)
+
+    if (result.deletedCount === 0) {
+      console.log(`Failed to delete content with id: ${id}`)
+      return { success: false, error: "Failed to delete content. Please try again." }
+    }
+
+    console.log(`Successfully deleted content with id: ${id}`)
     return { success: true, message: "Content deleted successfully" }
   } catch (error) {
-    console.error("Error deleting content:", error)
-    return { success: false, error: error.message }
+    console.error("Error in deleteContent:", error)
+    return { success: false, error: error.message || "An unexpected error occurred" }
   }
 }
+
 
 export async function getAllHashtags() {
   try {

@@ -2,8 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import { X, Loader2 } from "lucide-react"
-import { uploadFiles, updateContent } from "../../../actions/uploadActions"
-// import { uploadFiles, updateContent } from "../actions/uploadActions"
+import { uploadFiles, updateContent, deleteContent } from "../../../actions/uploadActions"
 
 export default function UploadForm({ initialContent = null, onClose, onContentUpdate, onContentDelete, onContentAdd }) {
   const formRef = useRef()
@@ -83,6 +82,24 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
       setIsLoading(false)
     }
   }
+ 
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this content?")) {
+      setIsLoading(true)
+      try {
+        const success = await onContentDelete(initialContent._id)
+        if (success) {
+          onClose()
+        }
+      } catch (error) {
+        console.error("Error in handleDelete:", error)
+        alert(`Failed to delete content: ${error.message}`)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+  }
+  
 
   const handleAddLink = (type, link) => {
     switch (type) {
@@ -334,7 +351,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
             {isEditing && (
               <button
                 type="button"
-                onClick={onContentDelete}
+                onClick={handleDelete}
                 disabled={isLoading}
                 className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[hsl(var(--sidebar-bg))]"
               >

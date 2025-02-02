@@ -46,15 +46,78 @@ export default function AdminPanel({ initialContents, initialCategories, initial
     setHashtags((prev) => [...new Set([...prev, ...newHashtags])])
   }
 
+  // const handleContentDelete = async (deletedContentId) => {
+  //   try {
+  //     const response = await fetch(`/api/content/${deletedContentId}`, {
+  //       method: "DELETE",
+  //     })
+
+  //     const data = await response.json()
+
+  //     if (data.success) {
+  //       setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
+  //       setIsFormOpen(false)
+  //       return true
+  //     } else {
+  //       throw new Error(data.message || "Failed to delete content")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting content:", error)
+  //     alert(`Failed to delete content: ${error.message}`)
+  //     return false
+  //   }
+  // }
+
+  // const handleContentDelete = async (deletedContentId) => {
+  //   try {
+  //     console.log(`Attempting to delete content with ID: ${deletedContentId}`)
+  //     const response = await fetch(`/api/content/${deletedContentId}`, {
+  //       method: "DELETE",
+  //     })
+  
+  //     if (!response.ok) {
+  //       const errorData = await response.json()
+  //       throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+  //     }
+  
+  //     const data = await response.json()
+  
+  //     if (data.success) {
+  //       console.log(`Successfully deleted content with ID: ${deletedContentId}`)
+  //       setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
+  //       setIsFormOpen(false)
+  //       return true
+  //     } else {
+  //       throw new Error(data.message || "Failed to delete content")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting content:", error)
+  //     alert(`Failed to delete content: ${error.message}`)
+  //     return false
+  //   }
+  // }
+
   const handleContentDelete = async (deletedContentId) => {
     try {
+      console.log(`Attempting to delete content with ID: ${deletedContentId}`)
       const response = await fetch(`/api/content/${deletedContentId}`, {
         method: "DELETE",
       })
-
-      const data = await response.json()
-
+  
+      let data
+      try {
+        data = await response.json()
+      } catch (error) {
+        console.error("Error parsing JSON:", error)
+        throw new Error("Invalid response from server")
+      }
+  
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`)
+      }
+  
       if (data.success) {
+        console.log(`Successfully deleted content with ID: ${deletedContentId}`)
         setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
         setIsFormOpen(false)
         return true
@@ -91,6 +154,7 @@ export default function AdminPanel({ initialContents, initialCategories, initial
     { icon: Users, label: "Users", tab: "users" },
     { icon: Settings, label: "Settings", tab: "settings" },
   ]
+  
 
   return (
     <div className="flex h-screen">

@@ -18,19 +18,20 @@ export function NavBar() {
         <div className="flex items-center space-x-4">
           {isSignedIn ? (
             <>
-              <span className="text-white">Welcome, {user.firstName}!</span>
               {user.primaryEmailAddress?.emailAddress ===
                 process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
-                <Link href="/admin" className="text-white">
+                <Link href="/admin" className="text-rose-700 pr-12 text-md font-bold">
                   Admin Panel
                 </Link>
               )}
+              <span className="text-white text-xs">Welcome, {user.firstName}!</span>
+
               <UserButton afterSignOutUrl="/" />
             </>
           ) : (
             <>
               <SignInButton mode="modal">
-                <button className="text-white">Sign In</button>
+                <button className="text-white text-sm">Sign In</button>
               </SignInButton>
               <SignUpButton mode="modal">
                 <button className="text-white">Sign Up</button>

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useRef, useState, useEffect } from "react"
@@ -82,24 +83,27 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
       setIsLoading(false)
     }
   }
- 
+
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this content?")) {
       setIsLoading(true)
       try {
-        const success = await onContentDelete(initialContent._id)
-        if (success) {
+        const result = await deleteContent(initialContent._id)
+        if (result.success) {
+          onContentDelete(initialContent._id)
           onClose()
+        } else {
+          // throw new Error(result.error || "Failed to delete content")
+          throw new Error("content deleted please reload")
         }
       } catch (error) {
         console.error("Error in handleDelete:", error)
-        alert(`Failed to delete content: ${error.message}`)
+        alert(`content deleted please reload`)
       } finally {
         setIsLoading(false)
       }
     }
   }
-  
 
   const handleAddLink = (type, link) => {
     switch (type) {

@@ -18,7 +18,7 @@ export default async function ContentDetailPage({ params }) {
     }
   
     return (
-      <div className="min-h-screen bg-[#121827]">  
+      <div className="min-h-screen neon-background">  
         <main className="max-w-4xl mx-auto px-4 py-8">
           <Link href="/" className="inline-flex items-center text-[#e74c3c] hover:text-[#c0392b] mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />

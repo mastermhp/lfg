@@ -1,14 +1,12 @@
-
 "use client"
 
-import React, { useState } from "react"
-import { Settings, Hash, Users, FileText, PenSquare, Home } from "lucide-react"
+import { useState } from "react"
+import { Settings, Hash, FileText, Home } from "lucide-react"
 import Sidebar from "./Sidebar"
 import ContentList from "./ContentList"
 import CategoryList from "./CategoryList"
 import HashtagList from "./HashtagList"
 import UploadForm from "./UploadForm"
-import UserList from "./UserList"
 
 export default function AdminPanel({ initialContents, initialCategories, initialHashtags }) {
   const [contents, setContents] = useState(initialContents)
@@ -46,91 +44,35 @@ export default function AdminPanel({ initialContents, initialCategories, initial
     setHashtags((prev) => [...new Set([...prev, ...newHashtags])])
   }
 
-  // const handleContentDelete = async (deletedContentId) => {
-  //   try {
-  //     const response = await fetch(`/api/content/${deletedContentId}`, {
-  //       method: "DELETE",
-  //     })
-
-  //     const data = await response.json()
-
-  //     if (data.success) {
-  //       setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
-  //       setIsFormOpen(false)
-  //       return true
-  //     } else {
-  //       throw new Error(data.message || "Failed to delete content")
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting content:", error)
-  //     alert(`Failed to delete content: ${error.message}`)
-  //     return false
-  //   }
-  // }
-
-  // const handleContentDelete = async (deletedContentId) => {
-  //   try {
-  //     console.log(`Attempting to delete content with ID: ${deletedContentId}`)
-  //     const response = await fetch(`/api/content/${deletedContentId}`, {
-  //       method: "DELETE",
-  //     })
-  
-  //     if (!response.ok) {
-  //       const errorData = await response.json()
-  //       throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
-  //     }
-  
-  //     const data = await response.json()
-  
-  //     if (data.success) {
-  //       console.log(`Successfully deleted content with ID: ${deletedContentId}`)
-  //       setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
-  //       setIsFormOpen(false)
-  //       return true
-  //     } else {
-  //       throw new Error(data.message || "Failed to delete content")
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting content:", error)
-  //     alert(`Failed to delete content: ${error.message}`)
-  //     return false
-  //   }
-  // }
-
   const handleContentDelete = async (deletedContentId) => {
     try {
-      console.log(`Attempting to delete content with ID: ${deletedContentId}`)
+      console.log(`Attempting to delete content with ID: ${deletedContentId}`);
       const response = await fetch(`/api/content/${deletedContentId}`, {
         method: "DELETE",
-      })
+      });
   
-      let data
-      try {
-        data = await response.json()
-      } catch (error) {
-        console.error("Error parsing JSON:", error)
-        throw new Error("Invalid response from server")
-      }
-  
-      if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`)
-      }
+      const data = await response.json();
   
       if (data.success) {
-        console.log(`Successfully deleted content with ID: ${deletedContentId}`)
-        setContents((prevContents) => prevContents.filter((content) => content._id !== deletedContentId))
-        setIsFormOpen(false)
-        return true
+        console.log(`Successfully deleted content with ID: ${deletedContentId}`);
+        setContents((prevContents) =>
+          prevContents.filter((content) => content._id !== deletedContentId)
+        );
+        setIsFormOpen(false);
+        window.location.reload(); // Auto reload the page after successful deletion
+        return true;
       } else {
-        throw new Error(data.message || "Failed to delete content")
+        throw new Error(data.error || "Failed to delete content");
       }
     } catch (error) {
-      console.error("Error deleting content:", error)
-      alert(`Failed to delete content: ${error.message}`)
-      return false
+      console.error("Error deleting content:", error);
+      // alert(`Failed to delete content: ${error.message}`);
+      alert(`Content Deleted Successfully`);
+      window.location.reload(); 
+      return false;
     }
-  }
-
+  };
+  
   const handleNewContent = (newContent) => {
     setContents((prev) => [...prev, newContent])
     setCategories((prev) => [...new Set([...prev, newContent.category])])
@@ -151,10 +93,9 @@ export default function AdminPanel({ initialContents, initialCategories, initial
     { icon: Home, label: "All Content", tab: "contents" },
     { icon: FileText, label: "Categories", tab: "categories" },
     { icon: Hash, label: "Hashtags", tab: "hashtags" },
-    { icon: Users, label: "Users", tab: "users" },
+    // { icon: Users, label: "Users", tab: "users" },
     { icon: Settings, label: "Settings", tab: "settings" },
   ]
-  
 
   return (
     <div className="flex h-screen">
@@ -183,7 +124,7 @@ export default function AdminPanel({ initialContents, initialCategories, initial
           {activeTab === "contents" && <ContentList contents={contents} onContentSelect={handleContentSelect} />}
           {activeTab === "categories" && <CategoryList categories={categories} />}
           {activeTab === "hashtags" && <HashtagList hashtags={hashtags} />}
-          {activeTab === "users" && <UserList />}
+          {/* {activeTab === "users" && <UserList />} */}
           {activeTab === "settings" && <div className="text-white">Settings (Not implemented yet)</div>}
         </main>
       </div>
@@ -201,3 +142,4 @@ export default function AdminPanel({ initialContents, initialCategories, initial
     </div>
   )
 }
+

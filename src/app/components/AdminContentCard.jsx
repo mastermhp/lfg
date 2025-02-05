@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "@/utils/googleDrive"
+import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "../utils/googleDrive"
+// import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "@/utils/googleDrive"
 
 
 export default function AdminContentCard({ content, onContentSelect }) {

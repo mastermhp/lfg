@@ -1,42 +1,17 @@
-// import { clerkMiddleware } from "@clerk/nextjs/server"
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// const adminEmails = ["parashmehedihasan@gmail.com"] // Replace with your admin email
+const isProtectedRoute = createRouteMatcher(['/admin']);
 
-// export default clerkMiddleware({
-//   publicRoutes: ["/", "/api/admin/users"],
-//   afterAuth(auth, req) {
-//     const isAdminRoute = req.nextUrl.pathname.startsWith("/admin")
-//     const isAdminUser = auth.userId && adminEmails.includes(auth.sessionClaims?.email)
-
-//     if (isAdminRoute && !isAdminUser) {
-//       const homeUrl = new URL("/", req.url)
-//       return Response.redirect(homeUrl)
-//     }
-//   },
-// })
-
-// export const config = {
-//   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-// }
-
-
-
-import { clerkMiddleware } from "@clerk/nextjs/server";
-
-const adminEmails = ["parashmehedihasan@gmail.com"]; // Admin email
-
-export default clerkMiddleware({
-  publicRoutes: ["/", "/api/admin/users"], // Only public routes
-  afterAuth(auth, req) {
-    const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-    const userEmail = auth.sessionClaims?.email;
-    const isAdminUser = auth.userId && adminEmails.includes(userEmail);
-
-    // ❌ Block access if not an admin
-    if (isAdminRoute && !isAdminUser) {
-      return Response.redirect(new URL("/", req.url)); // Redirect to home
-    }
-  },
+export default clerkMiddleware(async (auth, req) => {
+  // Restrict admin routes to specific email addresses
+  if (isProtectedRoute(req)) {
+    await auth.protect((user) => {
+      if (user?.primaryEmailAddress?.emailAddress !== "parashmehedihasan@gmail.com") {
+        // Send a 403 Forbidden response if the user is not the admin
+        return new Response('Forbidden', { status: 403 });
+      }
+    });
+  }
 });
 
 export const config = {

@@ -14,7 +14,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (user && user.primaryEmailAddress?.emailAddress !== "parashmehedihasan@gmail.com") {
+    if (user && user.primaryEmailAddress?.emailAddress !== "noboatwork@gmail.com") {
       alert("You do not have permission to access this page.");
       window.location.href = "/"; // Redirect to home or login
     } else {
@@ -37,7 +37,7 @@ export default function AdminPage() {
 
   console.log("User Info:", user);
 
-  if (!user || user.primaryEmailAddress?.emailAddress !== "parashmehedihasan@gmail.com") {
+  if (!user || user.primaryEmailAddress?.emailAddress !== "noboatwork@gmail.com") {
     return <p>Access Denied</p>;
   }
 

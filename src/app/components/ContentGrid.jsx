@@ -1,4 +1,3 @@
-// import { getAllFiles } from "../actions/uploadActions"
 import { getAllFiles } from "../../../actions/uploadActions";
 import ContentCard from "./ContentCard"
 

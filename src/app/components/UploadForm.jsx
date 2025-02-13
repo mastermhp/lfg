@@ -352,7 +352,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
                 <span>{isEditing ? "Update Content" : "Add Content"}</span>
               )}
             </button>
-            {isEditing && (
+            {/* {isEditing && (
               <button
                 type="button"
                 onClick={handleDelete}
@@ -368,7 +368,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
                   "Delete Content"
                 )}
               </button>
-            )}
+            )} */}
           </div>
         </form>
       </div>

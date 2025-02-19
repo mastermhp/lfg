@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { ImageIcon, Video, FileText, Download } from "lucide-react"
-// import { getGoogleDriveDirectUrl, isGoogleDriveUrl } from "@/utils/googleDrive"
 import Link from "next/link"
 import { getGoogleDriveDirectUrl , isGoogleDriveUrl} from "../utils/googleDrive"
 

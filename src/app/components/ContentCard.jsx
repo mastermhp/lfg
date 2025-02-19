@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Download } from "lucide-react";
+import { Download, Pause, Play } from "lucide-react";
 import {
   getGoogleDriveDirectUrl,
   isGoogleDriveUrl,
@@ -514,6 +514,13 @@ export default function ContentCard({ content }) {
             />
           )}
           <button
+              onClick={handleDownload}
+              className="absolute bottom-4 right-4 bg-black/40 hover:bg-black/60 p-2 rounded transition-colors"
+              title={`Download ${content?.videos?.length > 0 ? "video" : "image"}`}
+            >
+              <Download className="w-5 h-5 text-white" />
+            </button>
+          {/* <button
             onClick={() =>
               handleDownload(
                 videoUrl,
@@ -525,7 +532,7 @@ export default function ContentCard({ content }) {
           >
             {" "}
             <Download className="w-5 h-5 text-white" />{" "}
-          </button>{" "}
+          </button>{" "} */}
         </div>
       ) : content?.thumbnail ? (
         <Image

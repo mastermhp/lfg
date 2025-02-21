@@ -8,7 +8,8 @@ const ADMIN_EMAILS = [
   process.env.NEXT_PUBLIC_ADMIN_EMAIL,
   "mehediparash0720@gmail.com",
   "minhazimran143@gmail.com",
-  "minhazimran143@gmail.com"
+  "minhazimran143@gmail.com",
+  "fachuki69@gmail.com"
 ];
 
 const grechenFuemen = Grechen_Fuemen({

@@ -191,7 +191,7 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
             className="w-full px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="text-lg font-medium text-white">Images</h3>
             {images.map((link, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -235,9 +235,9 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
                 Add
               </button>
             </div>
-          </div>
+          </div> */}
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="text-lg font-medium text-white">Videos</h3>
             {videos.map((link, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -281,9 +281,9 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
                 Add
               </button>
             </div>
-          </div>
+          </div> */}
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h3 className="text-lg font-medium text-white">Documents</h3>
             {documents.map((link, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -327,15 +327,15 @@ export default function UploadForm({ initialContent = null, onClose, onContentUp
                 Add
               </button>
             </div>
-          </div>
+          </div> */}
 
-          <input
+          {/* <input
             type="text"
             placeholder="Permissions (comma-separated user IDs)"
             value={permissions}
             onChange={(e) => setPermissions(e.target.value)}
             className="w-full px-4 py-2 rounded-md bg-[hsl(var(--content-bg))] border border-[hsl(var(--border))] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          /> */}
 
           <div className="flex gap-4">
             <button

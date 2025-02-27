@@ -48,7 +48,7 @@ export default function ContentDetails({ content }) {
 
   return (
     <div className="bg-[#1f2937] rounded-lg overflow-hidden">
-      <div className="aspect-video relative bg-black">
+      <div className="aspect-video h-[700px] relative bg-black">
         {content?.videos?.length > 0 ? (
           <div
             className="relative w-full h-full"
@@ -99,7 +99,8 @@ export default function ContentDetails({ content }) {
             src={getUrl(content.thumbnail) || "/placeholder.svg"}
             alt={content.title || "Thumbnail"}
             layout="fill"
-            objectFit="cover"
+            objectFit=""
+            className="w-full h-full"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-white">
@@ -128,7 +129,7 @@ export default function ContentDetails({ content }) {
             </>
           )}
 
-          <h2 className="text-xl font-semibold mb-2">Files</h2>
+          {/* <h2 className="text-xl font-semibold mb-2">Files</h2>
           <div className="space-y-4">
             {content?.images?.map((image, index) => (
               <div
@@ -191,7 +192,7 @@ export default function ContentDetails({ content }) {
                 </button>
               </Link>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

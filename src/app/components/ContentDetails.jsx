@@ -99,7 +99,7 @@ export default function ContentDetails({ content }) {
             src={getUrl(content.thumbnail) || "/placeholder.svg"}
             alt={content.title || "Thumbnail"}
             layout="fill"
-            objectFit=""
+            objectFit="contain"
             className="w-full h-full"
           />
         ) : (

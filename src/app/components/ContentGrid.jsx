@@ -10,6 +10,8 @@ function shuffleArray(array) {
   return array
 }
 
+
+//content grid added
 export default async function ContentGrid({ searchParams }) {
   const result = await getAllFiles()
   const contents = result.success ? result.contents : []

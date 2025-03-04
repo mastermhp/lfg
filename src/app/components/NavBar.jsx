@@ -30,7 +30,7 @@ export function NavBar() {
     <nav className="neon-background p-4 border-b border-gray-300">
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-14 h-14 bg-[#b42c1d] rounded-full flex items-center justify-center">
+          <div className="w-14 h-14 bg-[#b42c1d] rounded-full flex items-center justify-center cursor-pointer">
             <img src="/mr5.jpeg" className="object-cover overflow-hidden w-full h-full rounded-full" alt="" />
           </div>
           <span className={`${grechenFuemen.className} text-white text-xl font-semibold`}>Library of G</span>

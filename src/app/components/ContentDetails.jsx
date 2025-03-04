@@ -216,7 +216,6 @@
 //     </div>
 //   );
 // }
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -322,7 +321,7 @@ export default function ContentDetails({ content }) {
         <img
           src={currentUrl || "/placeholder.svg"}
           alt={content.title || "Thumbnail"}
-          className="max-w-full max-h-full object-contain"
+          className="w-auto h-auto max-w-full max-h-full object-contain"
           onError={tryNextImageUrl}
         />
       </div>
@@ -331,7 +330,7 @@ export default function ContentDetails({ content }) {
 
   return (
     <div className="bg-[#1f2937] rounded-lg overflow-hidden">
-      <div className="aspect-video h-[700px] relative bg-black">
+      <div className="aspect-video relative bg-black w-full h-auto max-h-[700px] min-h-[250px] sm:min-h-[350px] md:min-h-[450px] lg:min-h-[550px]">
         {content?.videos?.length > 0 ? (
           <div
             className="relative w-full h-full"
@@ -359,16 +358,16 @@ export default function ContentDetails({ content }) {
                 onClick={() => setVideoPreview(true)}
                 className="w-full h-full flex items-center justify-center text-white bg-gray-800"
               >
-                <Video className="w-10 h-10" />
+                <Video className="w-8 h-8 sm:w-10 sm:h-10" />
               </button>
             )}
 
             <button
               onClick={() => handleDownload(videoUrl, `video-${content.title || "download"}.mp4`)}
-              className="absolute bottom-14 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors"
+              className="absolute bottom-4 sm:bottom-14 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors"
               title="Download video"
             >
-              <Download className="w-5 h-5 text-white" />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </button>
           </div>
         ) : (
@@ -376,22 +375,22 @@ export default function ContentDetails({ content }) {
         )}
       </div>
 
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-white mb-2">{content?.title}</h1>
-        <p className="text-gray-400 mb-6">
+      <div className="p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-white mb-2">{content?.title}</h1>
+        <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
           {content?.createdAt ? new Date(content.createdAt).toLocaleDateString() : "Date unknown"}
         </p>
         <div className="text-white">
-          <h2 className="text-xl font-semibold mb-2">Description</h2>
-          <p className="mb-4">{content?.description}</p>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">Description</h2>
+          <p className="text-sm sm:text-base mb-4">{content?.description}</p>
 
-          <h2 className="text-xl font-semibold mb-2">Category</h2>
-          <p className="mb-4">{content?.category}</p>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">Category</h2>
+          <p className="text-sm sm:text-base mb-4">{content?.category}</p>
 
           {content?.hashtags && (
             <>
-              <h2 className="text-xl font-semibold mb-2">Hashtags</h2>
-              <div className="flex flex-wrap gap-2 mb-4">{renderHashtags()}</div>
+              <h2 className="text-lg sm:text-xl font-semibold mb-2">Hashtags</h2>
+              <div className="flex flex-wrap gap-2 mb-4 text-sm sm:text-base">{renderHashtags()}</div>
             </>
           )}
         </div>
